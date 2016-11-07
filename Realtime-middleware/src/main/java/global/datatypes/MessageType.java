@@ -1,7 +1,7 @@
 package global.datatypes;
 
 public enum MessageType {
-	SEND_UPDATE(0),
+	SEND_DATA(0),
 	SUBSCRIBE(1),
 	UNSUBSCRIBE(2),
 	UPDATE(3);

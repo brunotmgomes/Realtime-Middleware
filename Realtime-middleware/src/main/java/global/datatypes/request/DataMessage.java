@@ -4,10 +4,11 @@ import global.Message;
 import global.datatypes.MessageHeader;
 import global.datatypes.MessageType;
 
-public class UpdateMessage extends Message{
+public class DataMessage extends Message{
 	
+	private Object object;
 	
-	public UpdateMessage(){
+	public DataMessage(Object object){
 		this.header = new MessageHeader();
 		this.header.messageType = MessageType.UPDATE.getCode();
 	}
