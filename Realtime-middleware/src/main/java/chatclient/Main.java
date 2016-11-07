@@ -10,6 +10,19 @@ public class Main {
 		// TODO Auto-generated method stub
 		
 		
+		RealtimeChannelProxy realtimeChannel = new RealtimeChannelProxy("chat1");
+		realtimeChannel.subscribe(new ChatUpdateListener());
+		
+		
+	}
+	
+	static class ChatUpdateListener implements ValueEventListener{
+
+		@Override
+		public void onDataUpdate(DataSnapshot data) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

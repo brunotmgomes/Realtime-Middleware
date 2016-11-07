@@ -36,9 +36,7 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		int receiveMessageSize = inFromServer.readInt();
 		msg = new byte[receiveMessageSize];
 		inFromServer.read(msg, 0, receiveMessageSize);
-		
-		closeConnection();
-		
+				
 		return msg;
 	}
 	
@@ -48,10 +46,12 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		inFromServer = new DataInputStream(clientSocket.getInputStream());
 	}
 	
-	private void closeConnection() throws IOException{
+	@Override
+	public void closeConnection() throws IOException{
 		clientSocket.close();
 		outToServer.close();
 		inFromServer.close();
 	}
+
 
 }

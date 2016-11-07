@@ -2,6 +2,6 @@ package chatclient;
 
 public interface ValueEventListener {
 
-	void onDataChange(DataSnapshot data);
+	void onDataUpdate(DataSnapshot data);
 	
 }

@@ -1,46 +1,31 @@
 package infrastructure.client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.Socket;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
-import chatclient.ValueEventListener;
+import infrastructure.client.connection.ConnectionHandler;
+import infrastructure.client.connection.TcpConnectionHandler;
 
 public class ClientRequestHandler {
-
-	private ValueEventListener listener;
+	
+	private ConnectionHandler connHandler;
 	
 	
-	public ClientRequestHandler(){
-		//init connection
-		clientSocket = new Socket(this.host, this.port);
-		outToServer = new DataOutputStream(clientSocket.getOutputStream());
-		inFromServer = new DataInputStream(clientSocket.getInputStream());
-		
-		int sentMessageSize = msg.length;
-		outToServer.writeInt(sentMessageSize);
-		outToServer.write(msg,0,sentMessageSize);
-		outToServer.flush();
+	public ClientRequestHandler(String host, int port) throws UnknownHostException, IOException{
+		connHandler = new TcpConnectionHandler(host, port);
 	}
 	
-	public void send(){
+	public void send(byte[] msg) throws UnknownHostException, IOException{
 		connHandler.send(msg);
 	}
 	
-	
-	public void subscribe(String channel){
-		
+	public byte[] receive() throws IOException{
+		return connHandler.receive();
 	}
 	
-	public void update(){
-
-		
-		
-		listener.onDataChange(data);
+	public void closeConnection() throws IOException{
+		connHandler.closeConnection();
 	}
 	
-	public void unsubscribe(){
-		
-	}
 	
 }
