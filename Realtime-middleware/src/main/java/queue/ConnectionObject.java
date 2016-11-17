@@ -25,22 +25,26 @@ public class ConnectionObject {
 		queue.remove(msg);
 	}
 	
-	public synchronized void notifyClient(){
+	private synchronized void runNotify(){
+		for(int i = 0; i < queue.size(); i++){
+ 			boolean messageSent = false;
+ 			while(!messageSent){
+ 				try{
+ 					Message msg = queue.get(i)
+ 					clq.send(msg);
+ 					dequeue(msg);
+ 					messageSent = true;
+ 				}catch(Exception e){
+ 					
+ 				}
+ 			}
+ 		}
+	}
+	
+	public void notifyClient(){
 		Thread t1 = new Thread(new Runnable() {
 		     public void run() {
-		    	 for(int i = 0; i < queue.size(); i++){
-		 			boolean messageSent = false;
-		 			while(!messageSent){
-		 				try{
-		 					Message msg = queue.get(i)
-		 					clq.send(msg);
-		 					dequeue(msg);
-		 					messageSent = true;
-		 				}catch(Exception e){
-		 					
-		 				}
-		 			}
-		 		}
+		    	 runNotify();
 		     }
 		});  
 		t1.start();
