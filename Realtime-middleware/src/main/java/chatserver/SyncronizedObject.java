@@ -1,16 +1,16 @@
 package chatserver;
 
-public interface SyncronizedData {
+public interface SyncronizedObject {
 
 	/**
 	 * saves the data
 	 */
-	public void onUpdated();
+	public void receiveUpdate();
 	
 	/**
 	 * returns
 	 */
-	public void getNewerThan(Object object);
+	public void broadcastUpdate(Object object);
 	
 	/**
 	 * 

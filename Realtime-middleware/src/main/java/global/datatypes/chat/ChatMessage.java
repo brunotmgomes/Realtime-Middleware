@@ -1,6 +1,9 @@
 package global.datatypes.chat;
 
-public class ChatMessage {
+import java.io.Serializable;
+
+public class ChatMessage implements Serializable{
+	
 	public String autor;
 	public String mensagem;
 }

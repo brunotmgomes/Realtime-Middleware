@@ -4,7 +4,8 @@ public enum MessageType {
 	SEND_DATA(0),
 	SUBSCRIBE(1),
 	UNSUBSCRIBE(2),
-	UPDATE(3);
+	UPDATE(3),
+	RECONNECT(4);
 	
 	
 	private final int code;

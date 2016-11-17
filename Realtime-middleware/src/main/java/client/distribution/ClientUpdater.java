@@ -1,18 +1,17 @@
-package chatclient;
+package client.distribution;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
+import client.infrastructure.ClientRequestHandler;
 import global.Config;
 import global.Marshaller;
+import global.Message;
 import global.datatypes.request.SubscribeMessage;
+import global.datatypes.request.UnsubscribeMessage;
 import global.datatypes.response.UpdateMessage;
-import infrastructure.client.ClientRequestHandler;
 
-public class SubscriptionUpdater implements Runnable{
+public class ClientUpdater implements Runnable{
 
 	private String channel;
-	private volatile ValueEventListener listener;
+	private volatile ChannelUpdateListener listener;
 	
 	private ClientRequestHandler handler;
 	
@@ -21,33 +20,41 @@ public class SubscriptionUpdater implements Runnable{
 	// checks internet connection
 	// checks for stop flag
 	// keeps connection open until it is asked to close
-
-	public SubscriptionUpdater(String channel, ValueEventListener listener){
+	public ClientUpdater(String channel, ChannelUpdateListener listener){
 		this.channel = channel;
 		this.listener = listener;
 		this.stopFlag = false;
 	}
 	
-	public void setListener(ValueEventListener listener){
+	public void setListener(ChannelUpdateListener listener){
 		this.listener = listener;
 	}
 	
+	//send listen message to server and pass updates to listener
+	//closes connection when done
 	@Override
 	public void run() {
 		initHandler();
-		//send listen message to server and pass updates to listener
 		sendStartUpdateMessage();
 		while(!stopFlag){
-			try {
-				byte [] msgBytes = this.handler.receive();
+			mainUpdateLoop();			
+		}
+		sendStopUpdatesMessage();
+	}
+	
+	public void mainUpdateLoop(){
+		try {
+			byte [] msgBytes = this.handler.receive();
+			if(!stopFlag){
 				Marshaller mrsh = new Marshaller();
 				UpdateMessage message = (UpdateMessage) mrsh.unmarshall(msgBytes);
-				this.listener.onDataUpdate(message.body.object);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
+				this.listener.onNewData(message.body.object);
+				//send ok back
+			}	
+		} catch (Exception e) {
+			//reconnect if exception is from disconnection
+			e.printStackTrace();
 		}
-		sendStopUpdateMesage();
 	}
 	
 	public void stopUpdates(){
@@ -59,13 +66,23 @@ public class SubscriptionUpdater implements Runnable{
 		try {
 			this.handler = new ClientRequestHandler(Config.HOST, Config.PORT);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	private void sendStartUpdateMessage(){
 		SubscribeMessage msg = new SubscribeMessage(channel);
+		sendMessage(msg);
+	}
+	
+	private void sendStopUpdatesMessage(){
+		UnsubscribeMessage msg = new UnsubscribeMessage();
+		sendMessage(msg);
+		//espera resposta, fecha conexao
+		
+	}
+	
+	private void sendMessage(Message msg){
 		Marshaller mrsh = new Marshaller();
 		byte[] msgBytes;
 		try {

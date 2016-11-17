@@ -6,7 +6,7 @@ import global.datatypes.MessageType;
 public class SubscribeMessage extends Message{
 
 	public SubscribeMessage(String channel){
-		header.messageType = MessageType.SUBSCRIBE.getCode();
+		header.messageType = MessageType.SUBSCRIBE;
 		body.object = channel;
 	}
 	

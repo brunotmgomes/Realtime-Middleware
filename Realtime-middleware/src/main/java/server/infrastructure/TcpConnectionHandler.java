@@ -1,4 +1,4 @@
-package infrastructure.server;
+package server.infrastructure;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TcpConnectionHandler implements ConnectionHandler{
+public class TcpConnectionHandler{
 
 	private int portNumber;
 	
@@ -17,14 +17,13 @@ public class TcpConnectionHandler implements ConnectionHandler{
 	private DataOutputStream outToClient = null;
 	private DataInputStream inFromClient = null;
 	
-	public TcpConnectionHandler(int port){
+	public TcpConnectionHandler(int port) throws IOException{
 		this.portNumber = port;
+		welcomeSocket = new ServerSocket(portNumber);
 	}
 
-	@Override
 	public byte[] receive() throws IOException {
 		byte[] rcvMsg = null;
-		welcomeSocket = new ServerSocket(portNumber);
 		connectionSocket = welcomeSocket.accept();
 		
 		outToClient = new DataOutputStream(connectionSocket.getOutputStream());
@@ -33,12 +32,10 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		receivedMessageSize = inFromClient.readInt();
 		rcvMsg = new byte[receivedMessageSize];
 		
-		inFromClient.read(rcvMsg, 0, receivedMessageSize);
-		
+		inFromClient.read(rcvMsg, 0, receivedMessageSize);	
 		return rcvMsg;
 	}
 
-	@Override
 	public void send(byte[] msg) throws IOException {
 		sentMessageSize = msg.length;
 		outToClient.writeInt(sentMessageSize);
@@ -50,7 +47,6 @@ public class TcpConnectionHandler implements ConnectionHandler{
 	
 	private void closeConnection() throws IOException {
 		connectionSocket.close();
-		welcomeSocket.close();
 		outToClient.close();
 		inFromClient.close();
 	}

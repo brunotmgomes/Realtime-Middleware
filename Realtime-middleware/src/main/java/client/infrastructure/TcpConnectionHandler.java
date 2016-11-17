@@ -1,4 +1,4 @@
-package infrastructure.client.connection;
+package client.infrastructure;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class TcpConnectionHandler implements ConnectionHandler{
+public class TcpConnectionHandler{
 
 	private int port;
 	private String host;
@@ -21,7 +21,7 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		initConnection();
 	}
 	
-	@Override
+
 	public void send(byte[] msg) throws IOException {
 		int sentMessageSize = msg.length;
 		outToServer.writeInt(sentMessageSize);
@@ -29,7 +29,7 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		outToServer.flush();
 	}
 
-	@Override
+
 	public byte[] receive() throws IOException{
 		byte[] msg = null;
 		
@@ -46,7 +46,7 @@ public class TcpConnectionHandler implements ConnectionHandler{
 		inFromServer = new DataInputStream(clientSocket.getInputStream());
 	}
 	
-	@Override
+	
 	public void closeConnection() throws IOException{
 		clientSocket.close();
 		outToServer.close();

@@ -1,14 +1,11 @@
-package infrastructure.client;
+package client.infrastructure;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import infrastructure.client.connection.ConnectionHandler;
-import infrastructure.client.connection.TcpConnectionHandler;
-
 public class ClientRequestHandler {
 	
-	private ConnectionHandler connHandler;
+	private TcpConnectionHandler connHandler;
 	
 	
 	public ClientRequestHandler(String host, int port) throws UnknownHostException, IOException{

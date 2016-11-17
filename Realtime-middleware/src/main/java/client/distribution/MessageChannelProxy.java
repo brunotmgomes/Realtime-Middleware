@@ -1,41 +1,45 @@
-package chatclient;
+package client.distribution;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.UnknownHostException;
 
+import client.infrastructure.ClientRequestHandler;
 import global.Config;
 import global.Marshaller;
 import global.Message;
 import global.datatypes.request.DataMessage;
-import infrastructure.client.ClientRequestHandler;
 
-public class RealtimeChannelProxy {
+public class MessageChannelProxy {
 
 	private String channel;
-	private SubscriptionUpdater updater;
+	private ClientUpdater updater;
 	
-	public RealtimeChannelProxy(String channel){
+	public MessageChannelProxy(String channel){
 		this.channel = channel;
 	}
 	
-	public void subscribe(ValueEventListener listener){
-		//start connection to listen
+	public void subscribe(ChannelUpdateListener listener){
 		if(updater == null){
-			this.updater = new SubscriptionUpdater(channel, listener);
-			Thread updaterThread = new Thread(updater);
-			updaterThread.start();
+			startUpdateConnection(listener);
 		}else{
 			this.updater.setListener(listener);
 		}		
-		
+	}
+	
+	private void startUpdateConnection(ChannelUpdateListener listener){
+		this.updater = new ClientUpdater(channel, listener);
+		Thread updaterThread = new Thread(updater);
+		updaterThread.start();
 	}
 	
 	public void unsubscribe(){
 		this.updater.stopUpdates();
 	}
 	
-	public void sendUpdate(Object messageContent){
+	public void sendUpdate(Serializable messageContent){
 		DataMessage message = new DataMessage(messageContent);
+		message.header.channel = this.channel;
 		byte[] byteMsg = marshallMessage(message);
 		ClientRequestHandler handler;
 		try {
