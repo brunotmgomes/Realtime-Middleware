@@ -1,10 +1,10 @@
 package global.datatypes;
 
 public enum MessageType {
-	SEND_UPDATE(0),
-	SUBSCRIBE(1),
-	UNSUBSCRIBE(2),
-	UPDATE(3);
+	SUBSCRIBE(0),
+	UNSUBSCRIBE(1),
+	RESUBSCRIBE(2),
+	NEWMESSAGE(3);
 	
 	
 	private final int code;

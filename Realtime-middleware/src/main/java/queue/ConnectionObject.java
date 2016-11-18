@@ -17,11 +17,11 @@ public class ConnectionObject {
 		this.clq = clq;
 	}
 	
-	public void enqueue(Message msg){
+	public synchronized void enqueue(Message msg){
 		queue.add(msg);
 	}
 	
-	private void dequeue(Message msg){
+	private synchronized void dequeue(Message msg){
 		queue.remove(msg);
 	}
 	
