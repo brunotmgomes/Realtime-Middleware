@@ -1,30 +1,48 @@
 package queue;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.HashMap;
 
 import global.Message;
 
+// A queue guarda a lista de clientes conectados.
 public class Queue {
-	private ArrayList<ConnectionObject> connectionQueue = new ArrayList<ConnectionObject>();
+	//guarda um connectionObject, referenciando seu id.
+	private HashMap<String, ConnectionObject> connectionQueue = new HashMap<String, ConnectionObject>();
 	
+	//adiciona um ConnectionObject a fila. (inscreve um cliente para receber mensagens).
 	public void subscribe(ConnectionObject connectionObject){
-		connectionQueue.add(connectionObject);
+		connectionQueue.put(connectionObject.getId(), connectionObject);
 	}
 	
-	public void unsubscribe(ConnectionObject connectionObject){
-		if(!connectionQueue.isEmpty())
-			connectionQueue.remove(connectionObject);
+	//retira o cliente da lista.
+	public void unsubscribe(String id) throws IOException{
+		ConnectionObject cObj = connectionQueue.get(id);
+		if(cObj != null){
+			cObj.closeSocket(); //fecha o socket, antes de remover o cliente da lista.
+			connectionQueue.remove(id);
+		}
+		
 	}
 	
-	public void enqueue(Message msg){
-		for(int i = 0; i < connectionQueue.size(); i++){
-			connectionQueue.get(i).enqueue(msg);
+	public void resubscribe(String id, Socket skt){ //troca o socket, assim, reestabelecendo a conexão.
+		ConnectionObject cObj= connectionQueue.get(id);
+		if(cObj != null){
+			cObj.setSocket(skt);
+		}
+		
+	}
+	
+	public void enqueue(Message msg){ //adiciona uma mensagem a todos os clientes cadastrados na fila.
+		for (ConnectionObject cObj : connectionQueue.values()) {
+			cObj.enqueue(msg);
 		}
 	}
-	
-	public void notifySubscribers(){
-		for(int i = 0; i < connectionQueue.size(); i++){
-			connectionQueue.get(i).notifyClient();
+
+	public void notifySubscribers(){ //envia todas as mensagens que estão na lista do cliente, para ele.
+		for (ConnectionObject cObj : connectionQueue.values()) {
+			cObj.notifyClient();
 		}
 	}
 }

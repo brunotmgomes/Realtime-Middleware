@@ -1,19 +1,13 @@
 package queue;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.charset.Charset;
 
+
+
+//coloquei meu client request handler no projeto, pq o que tava aqui não tava completo.
 public class ClientRequestHandler {
 	private String host;
 	private int port;
@@ -23,8 +17,6 @@ public class ClientRequestHandler {
 	private Socket clientSocket = null;
 	private DataOutputStream outToServer;
 	private DataInputStream inFromServer;
-	
-	InetAddress IPAddress;
 	
 	
 	public ClientRequestHandler(String host, int port) throws IOException{
