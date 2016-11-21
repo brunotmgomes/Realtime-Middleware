@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TcpConnectionHandler{
+public class ServerRequestHandler {
 
 	private int portNumber;
 	
@@ -17,12 +17,24 @@ public class TcpConnectionHandler{
 	private DataOutputStream outToClient = null;
 	private DataInputStream inFromClient = null;
 	
-	public TcpConnectionHandler(int port) throws IOException{
+	public ServerRequestHandler(int port) throws IOException{
 		this.portNumber = port;
+	}
+	
+	public ServerRequestHandler(Socket socket){
+		this.connectionSocket = socket;
+		try{
+			outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void startWelcomeConnection() throws IOException{
 		welcomeSocket = new ServerSocket(portNumber);
 	}
-
-	public byte[] receive() throws IOException {
+	
+	public byte[] receive() throws IOException{
 		byte[] rcvMsg = null;
 		connectionSocket = welcomeSocket.accept();
 		
@@ -35,14 +47,12 @@ public class TcpConnectionHandler{
 		inFromClient.read(rcvMsg, 0, receivedMessageSize);	
 		return rcvMsg;
 	}
-
-	public void send(byte[] msg) throws IOException {
+	
+	public void send(byte[] msg) throws IOException{
 		sentMessageSize = msg.length;
 		outToClient.writeInt(sentMessageSize);
 		outToClient.write(msg);
 		outToClient.flush();
-		
-		closeConnection();
 	}
 	
 	private void closeConnection() throws IOException {
@@ -50,7 +60,10 @@ public class TcpConnectionHandler{
 		outToClient.close();
 		inFromClient.close();
 	}
-	
-	
+
+	public Socket getSocket() {
+		return connectionSocket;
+	}
+
 	
 }

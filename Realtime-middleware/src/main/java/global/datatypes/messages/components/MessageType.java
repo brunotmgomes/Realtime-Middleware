@@ -1,11 +1,11 @@
-package global.datatypes;
+package global.datatypes.messages.components;
 
 public enum MessageType {
-	SEND_DATA(0),
+	NEW_MESSAGE(0),
 	SUBSCRIBE(1),
 	UNSUBSCRIBE(2),
-	UPDATE(3),
-	RECONNECT(4);
+	NOTIFY(3),
+	RESUBSCRIBE(4);
 	
 	
 	private final int code;

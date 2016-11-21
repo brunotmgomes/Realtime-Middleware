@@ -7,13 +7,13 @@ import java.net.UnknownHostException;
 import client.infrastructure.ClientRequestHandler;
 import global.Config;
 import global.Marshaller;
-import global.Message;
-import global.datatypes.request.DataMessage;
+import global.datatypes.messages.DataMessage;
+import global.datatypes.messages.Message;
 
 public class MessageChannelProxy {
 
 	private String channel;
-	private ClientUpdater updater;
+	private ChannelUpdateHandler updater;
 	
 	public MessageChannelProxy(String channel){
 		this.channel = channel;
@@ -28,7 +28,7 @@ public class MessageChannelProxy {
 	}
 	
 	private void startUpdateConnection(ChannelUpdateListener listener){
-		this.updater = new ClientUpdater(channel, listener);
+		this.updater = new ChannelUpdateHandler(channel, listener);
 		Thread updaterThread = new Thread(updater);
 		updaterThread.start();
 	}

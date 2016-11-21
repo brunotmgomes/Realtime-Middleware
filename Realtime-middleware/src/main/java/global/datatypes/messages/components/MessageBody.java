@@ -1,4 +1,4 @@
-package global.datatypes;
+package global.datatypes.messages.components;
 
 import java.io.Serializable;
 

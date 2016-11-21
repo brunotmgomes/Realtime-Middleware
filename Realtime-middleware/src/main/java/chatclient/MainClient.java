@@ -16,10 +16,10 @@ public class MainClient {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		MessageChannelProxy realtimeChannel = new MessageChannelProxy(Config.CHAT_CHANNEL);
-		//realtimeChannel.subscribe(new ChatUpdateListener());
+		MessageChannelProxy messageChannel = new MessageChannelProxy(Config.CHAT_CHANNEL);
+		messageChannel.subscribe(new ChatUpdateListener());
 		
-		inputLoop(realtimeChannel);
+		inputLoop(messageChannel);
 	}
 	
 	private static void inputLoop(MessageChannelProxy realtimeChannel){
@@ -39,7 +39,8 @@ public class MainClient {
 		@Override
 		public void onNewData(Object object) {
 			ChatMessage message = (ChatMessage) object;
-			System.out.println(message.toString());
+			System.out.println("echo from server: ");
+			System.out.println(message.mensagem);
 			
 		}
 		

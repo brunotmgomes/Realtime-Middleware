@@ -1,9 +1,9 @@
-package global;
+package global.datatypes.messages;
 
 import java.io.Serializable;
 
-import global.datatypes.MessageBody;
-import global.datatypes.MessageHeader;
+import global.datatypes.messages.components.MessageBody;
+import global.datatypes.messages.components.MessageHeader;
 
 public class Message implements Serializable{
 	

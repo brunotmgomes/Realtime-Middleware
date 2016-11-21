@@ -1,6 +1,9 @@
 package chatserver;
 
+import java.io.IOException;
+
 import global.Config;
+import server.distribution.MessageServer;
 
 public class MainServer {
 
@@ -13,7 +16,12 @@ public class MainServer {
 		ChatDatabase database = new ChatDatabase();
 		server.addMessageChannel(Config.CHAT_CHANNEL, database);
 		
-		server.start();
+		try {
+			server.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }
