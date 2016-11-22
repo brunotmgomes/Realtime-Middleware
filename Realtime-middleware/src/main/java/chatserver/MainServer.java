@@ -1,27 +1,46 @@
 package chatserver;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import global.Config;
 import server.distribution.MessageServer;
 
 public class MainServer {
 
-	//channel manager (realtime data)
-	//channel data handler
+	private static MessageServer server;
 	
 	public static void main(String[] args){
-		MessageServer server = new MessageServer(Config.PORT);
+		server = new MessageServer(Config.PORT);
 		
 		ChatDatabase database = new ChatDatabase();
-		server.addMessageChannel(Config.CHAT_CHANNEL, database);
+		server.addMessageChannel(Config.CHAT_CHANNEL1, database);
 		
+		ChatDatabase database2 = new ChatDatabase();
+		server.addMessageChannel(Config.CHAT_CHANNEL2, database2);
+		
+		tryToStartServer();
+		
+		Scanner reader = new Scanner(System.in);
+		while(true){
+			String in = reader.nextLine();
+			
+			switch(in){
+				case("stop"):
+					server.stop();
+					break;
+				case("start"):
+					tryToStartServer();
+					break;				
+			}
+		}
+	}
+	
+	private static void tryToStartServer(){
 		try {
 			server.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }

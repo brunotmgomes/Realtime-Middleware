@@ -2,48 +2,43 @@ package chatclient;
 
 import java.util.Scanner;
 
-import client.distribution.MessageChannelProxy;
-import client.distribution.ChannelUpdateListener;
 import global.Config;
-import global.datatypes.chat.ChatMessage;
 
 public class MainClient {
 
-	// client creates listener, that binds the infrastructure with the front end
-	// listener is sent to clientRequest handler to send to the surface the
-	// json data received on updates
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		MessageChannelProxy messageChannel = new MessageChannelProxy(Config.CHAT_CHANNEL);
-		messageChannel.subscribe(new ChatUpdateListener());
-		
-		inputLoop(messageChannel);
-	}
-	
-	private static void inputLoop(MessageChannelProxy realtimeChannel){
-		while(true){
-			Scanner reader = new Scanner(System.in);
-			System.out.println("Enter your message: ");
-			String msg = reader.nextLine();
-			
-			ChatMessage message = new ChatMessage();
-			message.mensagem = msg;
-			realtimeChannel.sendUpdate(message);
-		}
-	}
-	
-	static class ChatUpdateListener implements ChannelUpdateListener{
+	public static void main(String[] args) {		
+		System.out.println("Choose a chat to join");
+		System.out.println("1 - " + Config.CHAT_CHANNEL1);
+		System.out.println("2 - " + Config.CHAT_CHANNEL2) ;
 
-		@Override
-		public void onNewData(Object object) {
-			ChatMessage message = (ChatMessage) object;
-			System.out.println("echo from server: ");
-			System.out.println(message.mensagem);
-			
+		Scanner reader = new Scanner(System.in);
+		
+		int choice = reader.nextInt();
+		String roomName;
+		
+		switch(choice){
+			case 1: 
+				roomName = Config.CHAT_CHANNEL1;
+				break;
+			case 2:
+				roomName = Config.CHAT_CHANNEL2;
+				break;
+			default:
+				throw new RuntimeException();
 		}
 		
+		ChatRoom room = new ChatRoom(roomName, reader);
+		room.enter();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

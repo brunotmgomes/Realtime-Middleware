@@ -9,20 +9,19 @@ import global.datatypes.messages.DataMessage;
 import global.datatypes.messages.Message;
 import global.datatypes.messages.SubscribeMessage;
 import global.datatypes.messages.SubscribeResponseMessage;
-import global.datatypes.messages.UnsubscribeMessage;
-import global.datatypes.messages.components.MessageType;
 import server.infrastructure.ServerRequestHandler;
 
-public class ConnectionManager {
+public class ConnectionManager implements Runnable{
 	
 	private ServerRequestHandler rqHandler;
-	//private HashMap<String, ArrayList<ServerRequestHandler>> channels;
 	private HashMap<String, ChannelQueueManager> channels;
+	private volatile boolean stopFlag;
 	
 	public ConnectionManager(int port){
 		try {
 			rqHandler = new ServerRequestHandler(Config.PORT);
 			channels = new HashMap<>();
+			stopFlag = false;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -32,9 +31,18 @@ public class ConnectionManager {
 		channels.put(channel.name, channel);
 	}
 	
-	public void start() throws IOException{
+	@Override
+	public void run(){
+		try {
+			start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void start() throws IOException{
 		rqHandler.startWelcomeConnection();
-		while(true){
+		while(!stopFlag){
 			try {
 				byte[] msg = rqHandler.receive();
 				Message message = new Marshaller().unmarshall(msg);
@@ -64,6 +72,19 @@ public class ConnectionManager {
 				e.printStackTrace();
 			}
 		}
+		dropAllChannelConnections();
+		rqHandler.closeConnection();
+		stopFlag = false;
+	}
+	
+	private void dropAllChannelConnections(){
+		for (ChannelQueueManager cqm : channels.values()){
+			cqm.dropClients();
+		}
+	}
+	
+	public void stop(){
+		stopFlag = true;
 	}
 	
 	private void sendDataToChannel(DataMessage dataMsg){

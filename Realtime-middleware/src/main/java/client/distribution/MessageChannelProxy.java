@@ -13,7 +13,7 @@ import global.datatypes.messages.Message;
 public class MessageChannelProxy {
 
 	private String channel;
-	private ChannelUpdateHandler updater;
+	private ChannelSubscriptionHandler updater;
 	
 	public MessageChannelProxy(String channel){
 		this.channel = channel;
@@ -28,13 +28,14 @@ public class MessageChannelProxy {
 	}
 	
 	private void startUpdateConnection(ChannelUpdateListener listener){
-		this.updater = new ChannelUpdateHandler(channel, listener);
+		this.updater = new ChannelSubscriptionHandler(channel, listener);
 		Thread updaterThread = new Thread(updater);
 		updaterThread.start();
 	}
 	
 	public void unsubscribe(){
 		this.updater.stopUpdates();
+		this.updater = null;
 	}
 	
 	public void sendUpdate(Serializable messageContent){

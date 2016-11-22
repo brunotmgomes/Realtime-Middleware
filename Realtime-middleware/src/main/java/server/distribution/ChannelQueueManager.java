@@ -56,6 +56,16 @@ public class ChannelQueueManager {
 			cObj.notifyClient();
 		}		
 	}
+
+	public void dropClients() {
+		for(ConnectionQueue cObj : subscriberQueues.values()){
+			try {
+				cObj.closeConnection();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 
 }

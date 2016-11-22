@@ -2,8 +2,10 @@ package server.distribution;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
+import global.ExponentialBackoffHandler;
 import global.Marshaller;
 import global.datatypes.messages.Message;
 import server.infrastructure.ServerRequestHandler;
@@ -52,9 +54,10 @@ public class ConnectionQueue {
 	
 	private synchronized void runNotify(){ //envia as mensagens para o cliente, caso não conssiga, fica tentando até conseguir.
 		Marshaller marshaller = new Marshaller();
+		ExponentialBackoffHandler backoffHandler = new ExponentialBackoffHandler();
 		for(int i = 0; i < queue.size(); i++){
  			boolean messageSent = false;
- 			while(!messageSent){
+ 			while(!messageSent || skt == null){
  				try{
  					Message msg = queue.get(i);
  					byte[] msgBytes = marshaller.marshall(msg);
@@ -63,7 +66,8 @@ public class ConnectionQueue {
  					dequeue(msg);
  					messageSent = true;
  				}catch(IOException e){
- 					//se der exceção, vai voltar pro loop e tentar enviar novamente.
+ 					backoffHandler.waitABit();
+ 					//vai voltar pro loop e tentar enviar novamente.
  				}
  			}
  		}

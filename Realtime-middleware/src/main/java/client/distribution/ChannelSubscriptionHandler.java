@@ -1,5 +1,6 @@
 package client.distribution;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import client.infrastructure.ClientRequestHandler;
@@ -15,7 +16,7 @@ import global.datatypes.messages.components.MessageHeader;
 import global.datatypes.messages.components.MessageType;
 import global.exceptions.ConnectionDownException;
 
-public class ChannelUpdateHandler implements Runnable{
+public class ChannelSubscriptionHandler implements Runnable{
 
 	private String channel;
 	private String myClientId;
@@ -28,7 +29,7 @@ public class ChannelUpdateHandler implements Runnable{
 	// checks internet connection
 	// checks for stop flag
 	// keeps connection open until it is asked to close
-	public ChannelUpdateHandler(String channel, ChannelUpdateListener listener){
+	public ChannelSubscriptionHandler(String channel, ChannelUpdateListener listener){
 		this.channel = channel;
 		this.listener = listener;
 		this.stopFlag = false;
@@ -53,18 +54,18 @@ public class ChannelUpdateHandler implements Runnable{
 	public void mainUpdateLoop(){
 		try {
 			byte [] msgBytes = this.handler.receive();
-			if(!stopFlag){
-				try{
-					Marshaller mrsh = new Marshaller();
-					NotifyMessage message = (NotifyMessage) mrsh.unmarshall(msgBytes);
-					this.listener.onNewData(message.body.object);
-					//send ok back
-				}catch(ConnectionDownException e){
-					reconnect();
-				}
+			if(!stopFlag){			
+				Marshaller mrsh = new Marshaller();
+				NotifyMessage message = (NotifyMessage) mrsh.unmarshall(msgBytes);
+				this.listener.onNewData(message.body.object);
+				//send ok back
 			}	
-		} catch (Exception e) {
-			//reconnect if exception is from disconnection
+		} catch (ConnectionDownException e) {
+			System.out.println("info - Connection to server lost");
+			reconnect();
+		} catch(IOException e){
+			e.printStackTrace();
+		} catch(ClassNotFoundException e){
 			e.printStackTrace();
 		}
 	}
@@ -96,15 +97,14 @@ public class ChannelUpdateHandler implements Runnable{
 			myClientId  = (String) message.body.object;
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	private void reconnect(){
+		initHandler();
 		Message msg = new Message();
 		msg.header = new MessageHeader();
 		msg.header.messageType = MessageType.RESUBSCRIBE;

@@ -21,13 +21,9 @@ public class ServerRequestHandler {
 		this.portNumber = port;
 	}
 	
-	public ServerRequestHandler(Socket socket){
+	public ServerRequestHandler(Socket socket) throws IOException{
 		this.connectionSocket = socket;
-		try{
-			outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 	}
 	
 	public void startWelcomeConnection() throws IOException{
@@ -55,7 +51,8 @@ public class ServerRequestHandler {
 		outToClient.flush();
 	}
 	
-	private void closeConnection() throws IOException {
+	public void closeConnection() throws IOException {
+		welcomeSocket.close();
 		connectionSocket.close();
 		outToClient.close();
 		inFromClient.close();
