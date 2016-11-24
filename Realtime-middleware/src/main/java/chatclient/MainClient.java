@@ -25,6 +25,7 @@ public class MainClient {
 				roomName = Config.CHAT_CHANNEL2;
 				break;
 			default:
+				reader.close();
 				throw new RuntimeException();
 		}
 		

@@ -1,6 +1,5 @@
 package client.distribution;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 import client.infrastructure.ClientRequestHandler;
@@ -51,7 +50,7 @@ public class ChannelSubscriptionHandler implements Runnable{
 		sendUnsubscribeMessage();
 	}
 	
-	public void mainUpdateLoop(){
+	private void mainUpdateLoop(){
 		try {
 			byte [] msgBytes = this.handler.receive();
 			if(!stopFlag){			

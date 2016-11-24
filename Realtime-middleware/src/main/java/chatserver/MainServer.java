@@ -21,6 +21,7 @@ public class MainServer {
 		
 		tryToStartServer();
 		
+		@SuppressWarnings("resource")
 		Scanner reader = new Scanner(System.in);
 		while(true){
 			String in = reader.nextLine();

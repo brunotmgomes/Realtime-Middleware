@@ -2,7 +2,6 @@ package server.distribution;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 
 import global.ExponentialBackoffHandler;
